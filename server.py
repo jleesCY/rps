@@ -4,13 +4,13 @@ words = ["able","acid","aged","also","area","army","away","baby","back","ball","
 
 def server_program():
     # get the hostname
-    port = int(input("Enter port number (above 1023): "))
+    port = int(input("Enter port number (above 1023, below 65535): "))
     host = socket.gethostbyname(socket.gethostname())
     nums = host.split(".")
     name = words[int(nums[0])] + "-" + words[int(nums[1])] + "-" + words[int(nums[2])] + "-" + words[int(nums[3])]
     print("Name: ", name)
     print("Code: ", port)
-    print("^^Share these with friends!^^")
+    print()
     count = 0
     quit = ''
     
@@ -19,16 +19,16 @@ def server_program():
         server_socket.bind((host, port))
     except socket.error as e:
         print(str(e))
-    print('Server Created...')
+    print("Server Created...")
     server_socket.listen(2)
 
     # accept connections
     conn1, addr1 = server_socket.accept()
     name1 = conn1.recv(1024).decode()
-    print(name1 + " connected " + str(addr1))
+    print("[" + name1 + "] connected " + str(addr1))
     conn2, addr2 = server_socket.accept()
     name2 = conn2.recv(1024).decode()
-    print(name2 + " connected " + str(addr2))
+    print("[" + name2 + "] connected " + str(addr2))
 
     conn1.send(name2.encode())
     conn2.send(name1.encode())
@@ -44,37 +44,54 @@ def server_program():
         if resp1 == "leave":
             conn1.close()
             conn2.send((name1 + " left the game").encode())
+            print("[" + name1 + "] left the game")
             conn2.close()
             break
         if resp2 == "leave":
             conn2.close()
             conn1.send((name2 + " left the game").encode())
+            print("[" + name2 + "] left the game")
             conn1.close()
             break
 
         if resp1 == resp2:
             conn1.send("tie".encode())
+            print("<< sent to [" + name1 + "] >>")
             conn2.send("tie".encode())
+            print("<< sent to [" + name2 + "] >>")
         elif resp1 == "r" and resp2 == "p":
             conn1.send(name2.encode())
+            print("<< sent to [" + name1 + "] >>")
             conn2.send(name2.encode())
+            print("<< sent to [" + name2 + "] >>")
         elif resp1 == "r" and resp2 == "s":
             conn1.send(name1.encode())
+            print("<< sent to [" + name1 + "] >>")
             conn1.send(name1.encode())
+            print("<< sent to [" + name2 + "] >>")
         elif resp1 == "p" and resp2 == "r":
             conn1.send(name1.encode())
+            print("<< sent to [" + name1 + "] >>")
             conn2.send(name1.encode())
+            print("<< sent to [" + name2 + "] >>")
         elif resp1 == "p" and resp2 == "s":
             conn1.send(name2.encode())
+            print("<< sent to [" + name1 + "] >>")
             conn2.send(name2.encode())
+            print("<< sent to [" + name2 + "] >>")
         elif resp1 == "s" and resp2 == "r":
             conn1.send(name2.encode())
+            print("<< sent to [" + name1 + "] >>")
             conn2.send(name2.encode())
+            print("<< sent to [" + name2 + "] >>")
         elif resp1 == "s" and resp2 == "p":
             conn1.send(name1.encode())
+            print("<< sent to [" + name1 + "] >>")
             conn2.send(name1.encode())
+            print("<< sent to [" + name2 + "] >>")
         resp1 = ''
         resp2 = ''
+        print()
 
 # main
 if __name__ == '__main__':
